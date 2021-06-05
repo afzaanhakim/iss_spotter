@@ -9,7 +9,7 @@
 
 const request = require("request");
 
-const fetchMyIP = function (callback) {
+const fetchMyIP = function(callback) {
   let URL = "https://api.ipify.org/?format=json";
 
   request(URL, (error, response, body) => {
@@ -41,7 +41,7 @@ const fetchMyIP = function (callback) {
  *   - The lat and lng as an object (null if error). Example:
  *     { latitude: '49.27670', longitude: '-123.13000' }
  */
-const fetchCoordsByIP = function (ip, callback) {
+const fetchCoordsByIP = function(ip, callback) {
   request(`https://freegeoip.app/json/${ip}`, (error, response, body) => {
     if (error) {
       callback(error, null);
@@ -64,7 +64,7 @@ const fetchCoordsByIP = function (ip, callback) {
   });
 };
 
-const fetchISSFlyOverTimes = function (coords, callback) {
+const fetchISSFlyOverTimes = function(coords, callback) {
   const url = `http://api.open-notify.org/iss-pass.json?lat=${coords.latitude}&lon=${coords.longitude}`;
 
   request(url, (error, response, body) => {
@@ -99,7 +99,7 @@ const fetchISSFlyOverTimes = function (coords, callback) {
  *   - The fly-over times as an array (null if error):
  *     [ { risetime: <number>, duration: <number> }, ... ]
  */
- const nextISSTimesForMyLocation = function (callback) {
+const nextISSTimesForMyLocation = function(callback) {
   fetchMyIP((error, ip) => {
     if (error) {
       return callback(error, null);
@@ -108,24 +108,21 @@ const fetchISSFlyOverTimes = function (coords, callback) {
     //console.log("It worked! Returned IP:", ip);
     fetchCoordsByIP(ip, (error, coordinates) => {
       if (error) {
-        
-        return callback(error, null)
-       
+        return callback(error, null);
       }
 
       //console.log("Returned coordinates:", coordinates);
-      
+
       fetchISSFlyOverTimes(coordinates, (error, nextPasses) => {
         if (error) {
           return callback(error, null);
-         
         }
 
         //console.log("It worked! Returned flyover times:", nextPasses);
-        callback(null, nextPasses)
+        callback(null, nextPasses);
       });
     });
   });
-};;
+};
 // Don't need to export the other function since we are not testing it right now.
 module.exports = { nextISSTimesForMyLocation };
